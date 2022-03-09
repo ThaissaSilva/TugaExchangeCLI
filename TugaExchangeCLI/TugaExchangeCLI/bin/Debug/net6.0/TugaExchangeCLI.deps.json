@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "TugaExchangeCLI/1.0.0": {
+        "runtime": {
+          "TugaExchangeCLI.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "TugaExchangeCLI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
