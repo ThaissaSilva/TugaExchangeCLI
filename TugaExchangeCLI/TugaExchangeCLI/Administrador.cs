@@ -28,16 +28,45 @@ namespace TugaExchangeCLI
             }
             else if (moedaPorNome != null)
             {
-                throw new CoinNameAlreadyExistsException("O nome que inseriu já existe.");
+                if (moedaPorSimbolo != null)
+                {
+                    throw new CoinAlreadyExistsException("O nome e o símbolo que inseriu já existem.");
+                }
+                else
+                {
+                    throw new CoinNameAlreadyExistsException("O nome que inseriu já existe.");
+                }
             }
             else if (moedaPorSimbolo != null)
             {
                 throw new CoinSymbolAlreadyExistsException("O símbolo que inseriu já existe.");
             }
-            else
-            {
-                throw new CoinAlreadyExistsException("A nome e o símbolo que inseriu já existem.");
-            }
         }
+
+        public (List<string>, List<DateTime>) ObterNomeEDatasMoedas()
+        {
+            // Cria a lista de nomes de moedas e a lista de datas de criação das moedas
+            List<string> nomesMoedas = new List<string>();
+            List<DateTime> datasMoedas = new List<DateTime>();
+
+            // Povoa as listas criadas acima com os dados já disponíveis na lista de moedas
+            foreach (Moeda moeda in Moedas)
+            {
+                nomesMoedas.Add(moeda.Nome);
+                datasMoedas.Add(moeda.DataCriacao);
+            }
+
+            // Devolve as novas listas já preenchidas
+            return (nomesMoedas, datasMoedas);
+        }
+
+        public decimal ObterPrecoMoeda(string nome)
+        {
+            Moeda? moeda = Moedas.Find(moeda => moeda.Nome == nome);
+            decimal precoMoeda = moeda.Preco;
+            return precoMoeda;
+        }
+
+        
     }
 }

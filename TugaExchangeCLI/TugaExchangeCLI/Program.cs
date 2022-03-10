@@ -58,7 +58,14 @@ while (linhaComando != "exit")
                         nome = comando[2];
                         simbolo = comando[4];
 
-                        administrador.AdicionarMoeda(nome, simbolo);
+                        try
+                        {
+                            administrador.AdicionarMoeda(nome, simbolo);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
                     }
                     else
                     {
@@ -66,6 +73,27 @@ while (linhaComando != "exit")
                         Console.WriteLine("O nome da moeda não pode conter espaços.");
                     }
                 } 
+            }
+            break;
+        case "remove-coin":
+            break;
+        case "show-transactions":
+            break;
+        case "list-coins":
+            if (comando.Length == 1)
+            {
+                // Permite obter as duas listas desejadas através do método Obter...();
+                // e as salvar em duas variáveis separadas.
+                (var nomesMoedas, var datasMoedas) = administrador.ObterNomeEDatasMoedas();
+
+                // O código abaixo permite imprimir os resultados de duas listas
+                // ao mesmo tempo e foi retirado de
+                // https://stackoverflow.com/questions/24277668/how-to-print-two-list-results-together.
+
+                foreach (var a in nomesMoedas.Zip(datasMoedas, (n, d) => new {n, d }))
+                {
+                    Console.WriteLine(a.n + " "+ a.d);
+                }
             }
             break;
     }
