@@ -20,5 +20,9 @@ namespace TugaExchangeCLI
             Preco = 1;
             DataCriacao = DateTime.Now;
         } 
+
+        public Moeda()
+        {
+        }
     }
 }

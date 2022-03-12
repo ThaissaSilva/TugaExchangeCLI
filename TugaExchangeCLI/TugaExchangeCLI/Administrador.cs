@@ -10,7 +10,10 @@ namespace TugaExchangeCLI
     {
         // Uma característica (ou propriedade) do administrador é que
         // ele pode acessar e modificar uma lista de moedas.
-        public List<Moeda> Moedas { get; set; } = new List<Moeda>();
+        // As listas são estáticas porque quero que todos os administradores possam
+        // acessar os mesmos dados.
+        public static List<Moeda> Moedas { get; set; } = new List<Moeda>();
+        public static decimal SomaComissoes { get; set; }
 
         // Define o comportamento da função AdicionarMoeda([...]).
         public void AdicionarMoeda(string nome, string simbolo)
@@ -60,11 +63,28 @@ namespace TugaExchangeCLI
             return (nomesMoedas, datasMoedas);
         }
 
-        public decimal ObterPrecoMoeda(string nome)
+        public Moeda ObterMoeda(string nomeOuSimbolo)
         {
-            Moeda? moeda = Moedas.Find(moeda => moeda.Nome == nome);
-            decimal precoMoeda = moeda.Preco;
-            return precoMoeda;
+            Moeda? moedaPorNome = Moedas.Find(moedaPorNome => moedaPorNome.Nome == nomeOuSimbolo);
+            Moeda? moedaPorSimbolo = Moedas.Find(moedaPorSimbolo => moedaPorSimbolo.Simbolo == nomeOuSimbolo);
+            Moeda? moeda = new Moeda();
+
+            if (moedaPorNome == null)
+            {
+                if (moedaPorSimbolo == null)
+                {
+                    throw new CoinCouldNotBeFoundException("A moeda não foi encontrada.");
+                }
+                else
+                {
+                    moeda = moedaPorSimbolo;
+                }               
+            }
+            else
+            {
+                moeda = moedaPorNome;
+            }
+            return moeda;
         }
 
         
