@@ -23,6 +23,12 @@ namespace TugaExchangeCLI
 
         public Moeda()
         {
+            // Só para testes
+        }
+
+        public void AtualizarPreco(double variacao)
+        {
+            Preco = (decimal)variacao * Preco + Preco;
         }
     }
 }
