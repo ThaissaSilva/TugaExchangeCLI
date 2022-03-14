@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -9,14 +11,14 @@ namespace TugaExchangeCLI
 {
     public class Administrador
     {
-        // Uma característica (ou propriedade) do administrador é que
-        // ele pode acessar e modificar uma lista de moedas.
+
         // As listas são estáticas porque quero que todos os administradores possam acessar os mesmos dados.
         public static List<Moeda> Moedas { get; set; } = new List<Moeda>();
         public static decimal SomaComissoes { get; set; }
         public static List<Investidor> Investidores { get; set;} = new List<Investidor>();
         static System.Timers.Timer _timer;
         public static List<DateTime> datasTimer = new List<DateTime>();
+
 
         // Define o comportamento da função AdicionarMoeda([...]).
         public void AdicionarMoeda(string nome, string simbolo)
