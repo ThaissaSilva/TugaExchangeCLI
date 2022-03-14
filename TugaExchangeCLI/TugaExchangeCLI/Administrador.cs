@@ -215,5 +215,30 @@ namespace TugaExchangeCLI
                 datasTimer.Add(DateTime.Now); // excluir esta linha depois de testar.
             }
         }
+
+        public (List<DateTime>, List<string>,List<decimal>) ObterTransacoes()
+        {
+            List<string> tiposTransacoes = new List<string>();
+            List<DateTime> datasTransacoes = new List<DateTime>();
+            List<decimal> comissoesTransacoes = new List<decimal>();
+
+            var todasAsTransacoes = Investidor.TodasAsTransacoes;
+            foreach (Transacao transacao in todasAsTransacoes)
+            {
+                datasTransacoes.Add(transacao.Data);
+                comissoesTransacoes.Add(transacao.Comissao);
+
+                if (transacao is Compra)
+                {
+                    tiposTransacoes.Add("Compra");
+                }
+                else if (transacao is Venda)
+                {
+                    tiposTransacoes.Add("Venda");
+                }
+            }
+
+            return (datasTransacoes,tiposTransacoes,comissoesTransacoes);
+        }
     }
 }

@@ -241,5 +241,34 @@ namespace TugaExchangeCLI
 
             return (nomesMoedas, quantidadeMoedas, precosAtuais);
         }
+
+        public (List<string>, List<DateTime>, List<decimal>, List<decimal>, List<decimal>) ObterTransacoes()
+        {
+            List<string> tiposTransacoes = new List<string>();
+            List<DateTime> datasTransacoes = new List<DateTime>();
+            List<decimal> precosDeCompra = new List<decimal>();
+            List<decimal> quantidades = new List<decimal>();
+            List<decimal> valoresTotais = new List<decimal>();
+
+            var transacoesInvestidor = TransacoesIndividuais;
+
+            foreach (Transacao transacao in transacoesInvestidor)
+            {
+                datasTransacoes.Add(transacao.Data);
+                precosDeCompra.Add(transacao.Preco);
+                quantidades.Add(transacao.Quantidade);
+                valoresTotais.Add(transacao.ValorTotal);
+
+                if (transacao is Compra)
+                {
+                    tiposTransacoes.Add("Compra");
+                }
+                else if (transacao is Venda)
+                {
+                    tiposTransacoes.Add("Venda");
+                }
+            }
+            return (tiposTransacoes,datasTransacoes,precosDeCompra,quantidades,valoresTotais);
+        }
     }
 }
