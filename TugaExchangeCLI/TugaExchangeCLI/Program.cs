@@ -12,6 +12,7 @@ namespace Program
 
         static void Main()
         {
+            Administrador.Timer();
             // Criar a variável que vai conter os dados inseridos pelo usuário.
             string? linhaComando = null;
 
@@ -185,6 +186,74 @@ namespace Program
                         Console.WriteLine("Exemplo: buy-coin Bitcoin 30");
                     }
                     break;
+                case "sell-coin":
+                    string nomeMoeda;
+                    if (comando.Length == 2)
+                    {
+                        nomeMoeda = comando[1];
+
+                        try
+                        {
+                            investidorAtual.VenderMoeda(nomeMoeda);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                    }
+                    else if (comando.Length == 3)
+                    {
+                        nomeMoeda = comando[1];
+                        string quantidadeString = comando[2];
+                        decimal quantidade;
+
+                        bool isValid = decimal.TryParse(quantidadeString, out quantidade);
+
+                        if (isValid)
+                        {
+                            try
+                            {
+                                investidorAtual.VenderMoeda(nomeMoeda, quantidade);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Introduza uma quantidade válida da próxima vez.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Tem certeza de que introduziu todos os elementos necessários na ordem correta?");
+                        Console.WriteLine("Exemplo: sell-coin Bitcoin 50");
+                        Console.WriteLine("Exemplo: sell-coin Bitcoin");
+                    }
+                    break;
+                case "show-prices":
+                    if (comando.Length == 1)
+                    {
+                        (var nomesMoedas, var precosMoedas) = investidorAtual.ObterPrecos();
+
+                        foreach (var a in nomesMoedas.Zip(precosMoedas, (n, p) => new { n, p }))
+                        {
+                            Console.WriteLine(a.n + " " + a.p);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("O comando show-prices não requer argumentos.");
+                    }
+                    break;
+                case "logout":
+                    investidorAtual = null;
+                    Console.WriteLine("Você foi desconectado.");
+                    break;
+                default:
+                    Console.WriteLine("Comando não é reconhecido como um comando válido");
+                    break;
             }
         }
 
@@ -343,8 +412,93 @@ namespace Program
                         Console.WriteLine("Exemplo: add-investor -name ThaissaSilva");
                     }
                     break;
-                case "login":
-                    break;                
+                case "login": // aqui, a sintaxe pedida é login -u username para abranger o máximo de casos possíveis.
+                    if (comando.Length == 3)
+                    {
+                        if (comando[1] == "-u")
+                        {
+                            string nomeUsuario = comando[2];
+                            Investidor investidorTemporario = new Investidor();
+
+                            // Verificar se o Investidor já existe.
+                            try
+                            {
+                                investidorTemporario = administrador.ObterInvestidor(nomeUsuario);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+
+                            if (investidorTemporario != null)
+                            {
+                                // Verificar se o investidor encontrado já tem senha associada.
+                                bool passwordExiste = false;
+
+                                try
+                                {
+                                    passwordExiste = administrador.VerificarSeExistePassword(nomeUsuario);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e.Message);
+                                }
+
+                                // Se o investidor ainda não tiver senha associada, pedir que crie uma.
+                                if (!passwordExiste)
+                                {
+                                    string password = "";
+                                    while (password == "")
+                                    {
+                                        Console.WriteLine("Por favor, crie uma password:");
+                                        password = Console.ReadLine();
+                                    }
+                                    
+                                    investidorTemporario.CriarPassword(password);
+                                    investidorAtual = investidorTemporario;
+
+                                    Console.WriteLine("Sua password foi criada e a sua sessão foi iniciada.");
+                                }
+                                else // O investidor tem senha associada. Vamos pedi-la.
+                                {
+                                    string password = "";
+                                    while (password == "")
+                                    {
+                                        Console.WriteLine("Por favor, introduza a sua password:");
+                                        password = Console.ReadLine();
+                                    }
+
+                                    // Verificar se a senha introduzida está correta.
+
+                                    bool passwordEstaCorreta = investidorTemporario.VerificarPassword(password);
+
+                                    if (passwordEstaCorreta)
+                                    {
+                                        investidorAtual = investidorTemporario;
+                                        Console.WriteLine("A sua sessão foi iniciada.");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("A password introduzida está incorreta.");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("O segundo elemento deve ser -u.");
+                            Console.WriteLine("Exemplo: login -u Thaissa");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Tem certeza de que introduziu todos os elementos necessários na ordem correta?");
+                        Console.WriteLine("Exemplo: login -u Thaissa");
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Comando não é reconhecido como um comando válido");
+                    break;
             }
         }
     }

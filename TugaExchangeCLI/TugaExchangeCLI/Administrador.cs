@@ -209,10 +209,13 @@ namespace TugaExchangeCLI
         {
             var variacao = ObterTaxaVariacaoAleatoria();
 
-            foreach (Moeda moeda in Moedas)
+            if (Moedas.Count > 0)
             {
-                moeda.AtualizarPreco(variacao);
-                datasTimer.Add(DateTime.Now); // excluir esta linha depois de testar.
+                foreach (Moeda moeda in Moedas)
+                {
+                    moeda.AtualizarPreco(variacao);
+                    datasTimer.Add(DateTime.Now); // posso excluir esta linha depois de testar.
+                }
             }
         }
 

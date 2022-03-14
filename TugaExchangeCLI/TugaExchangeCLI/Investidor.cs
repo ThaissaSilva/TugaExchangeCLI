@@ -206,6 +206,22 @@ namespace TugaExchangeCLI
             }
         }
 
+        public bool VerificarPassword(string password)
+        {
+            bool passwordEstaCorreta = false;
+
+            if (Password == password)
+            {
+                passwordEstaCorreta = true;
+            }
+            else
+            {
+                passwordEstaCorreta = false;
+            }
+
+            return passwordEstaCorreta;
+        }
+
         public (List<string>, List<decimal>) ObterPrecos()
         {
             var listaMoedas = Administrador.Moedas;
