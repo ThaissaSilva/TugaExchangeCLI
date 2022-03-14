@@ -1,7 +1,4 @@
-﻿// Código adaptado daqui: https://stackoverflow.com/questions/11140884/command-line-interface-inside-your-c-sharp-application
-
-// Precisamos chamar TugaExchangeCLI porque é lá que se encontra a classe "ComandosTransversais".
-using TugaExchangeCLI;
+﻿using TugaExchangeCLI;
 
 namespace Program
 {
@@ -46,10 +43,35 @@ namespace Program
             switch (comando[0])
             {
                 case "help":
-                    var ajudaInvestidor = ComandosTransversais.Ajuda("investidor");
-                    foreach (KeyValuePair<string, string> kvp in ajudaInvestidor)
+                    if (comando.Length == 1)
                     {
-                        Console.WriteLine(kvp.Key, kvp.Value);
+                        string[] changePassword = new string[] { "change-password -o {password antiga} -n {nova password}", "Permite alterar a password do investidor." };
+                        string[] showPortfolio = new string[] { "show-portfolio", "Mostra o portfolio do investidor." };
+                        string[] showTransactions = new string[] { "show-transactions", "Mostra todas as transações efetuadas pelo investidor, a data, o preço de compra, a quantidade, e o valor total da transação." };
+                        string[] makeDeposit = new string[] { "make-deposit {quantidade}", "Permite fazer um depósito em EUR." };
+                        string[] buyCoin = new string[] { "buy-coin {nome da moeda} {quantidade}", "Permite fazer uma transação de compra. Pode ser inserido tanto o nome da moeda como o seu símbolo, seguido da quantidade desejada." };
+                        string[] sellCoin = new string[] { "sell-coin {nome da moeda} {quantidade}", "Permite fazer uma transação de venda. Pode ser inserido tanto o nome da moeda como o seu símbolo, seguido da quantidade desejada. A quantidade é opcional. Se for omitida, então é utilizado o valor total em carteira." };
+                        string[] showPrices = new string[] { "show-prices", "Mostrar as cotações atuais de todas as moedas disponíveis na corretora." };
+
+                        var ajudaInvestidor = new Dictionary<string, string>
+                        {
+                            {changePassword[0],changePassword[1] },
+                            {showPortfolio[0],showPortfolio[1] },
+                            {showTransactions[0], showTransactions[1] },
+                            {makeDeposit[0], makeDeposit[1] },
+                            {buyCoin[0],buyCoin[1] },
+                            {sellCoin[0], sellCoin[1] },
+                            {showPrices[0], showPrices[1] }
+                        };
+
+                        foreach (KeyValuePair<string, string> kvp in ajudaInvestidor)
+                        {
+                            Console.WriteLine($"{kvp.Key} => {kvp.Value}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("O comando help não requer argumentos.");
                     }
                     break;
                 case "clear":
@@ -97,10 +119,10 @@ namespace Program
                     break;
                 case "show-transactions":
                     if (comando.Length == 1)
-                    {                     
+                    {
                         (var tiposTransacoes, var datasTransacoes, var precosDeCompra, var quantidades, var valoresTotais) = investidorAtual.ObterTransacoes();
 
-                        var list = tiposTransacoes.Zip(datasTransacoes, (x, y) => x + y).Zip(precosDeCompra, (x, y) => x + y).Zip(quantidades, (x, y)=> x+y).Zip(valoresTotais,(x,y)=>x+y);
+                        var list = tiposTransacoes.Zip(datasTransacoes, (x, y) => x + " " + y).Zip(precosDeCompra, (x, y) => x + " " + y).Zip(quantidades, (x, y) => x + " " + y).Zip(valoresTotais, (x, y) => x + " " + y);
 
                         foreach (var data in list)
                         {
@@ -117,7 +139,7 @@ namespace Program
                     {
                         (var nomesMoedas, var quantidadeMoedas, var precosAtuais) = investidorAtual.MostrarPortfolio();
 
-                        var list = nomesMoedas.Zip(quantidadeMoedas, (x, y) => x + y).Zip(precosAtuais, (x, y) => x + y);
+                        var list = nomesMoedas.Zip(quantidadeMoedas, (x, y) => x + " " + y).Zip(precosAtuais, (x, y) => x + " " + y);
 
                         foreach (var data in list)
                         {
@@ -162,13 +184,13 @@ namespace Program
                         string quantidadeString = comando[2];
                         decimal quantidade;
 
-                        bool isValid = decimal.TryParse(quantidadeString,out quantidade);
+                        bool isValid = decimal.TryParse(quantidadeString, out quantidade);
 
                         if (isValid)
                         {
                             try
                             {
-                                investidorAtual.ComprarMoeda(nomeOuSimbolo,quantidade);
+                                investidorAtual.ComprarMoeda(nomeOuSimbolo, quantidade);
                             }
                             catch (Exception e)
                             {
@@ -262,11 +284,36 @@ namespace Program
             switch (comando[0])
             {
                 case "help":
-                    var ajudaAdministrador = ComandosTransversais.Ajuda("administrador");
-                    foreach (KeyValuePair<string, string> kvp in ajudaAdministrador)
+
+                    if (comando.Length == 1)
                     {
-                        Console.WriteLine(kvp.Key, kvp.Value);
+                        string[] addCoin = new string[] { "add-coin -name {nome da moeda} -symbolo {simbolo}", "Introduz uma nova moeda no sistema. Exemplo: add-coin -name Bitcoin -symbol BTC" };
+                        string[] removeCoin = new string[] { "remove-coin -name {nome da moeda}", "Remove uma moeda da corretora. Exemplo: remove-coin -name Bitcoin" };
+                        string[] showTransactions = new string[] { "show-transactions", "Mostra todas as transações dos utilizadores, a data em que ocorreram, e o montante ganho em comissões." };
+                        string[] listCoins = new string[] { "list-coins", "Lista todas as moedas registradas na corretora e a data em que foram adicionadas." };
+                        string[] addInvestor = new string[] { "add-investor -name {nome do investidor}", "Adiciona um novo investidor." };
+                        string[] login = new string[] { "login -u {username}", "Permite que um investidor faça login no sistema." };
+
+                        var ajudaAdministrador = new Dictionary<string, string>
+                        {
+                            {addCoin[0],addCoin[1] },
+                            {removeCoin[0],removeCoin[1] },
+                            {showTransactions[0], showTransactions[1] },
+                            {listCoins[0], listCoins[1] },
+                            {addInvestor[0],addInvestor[1] },
+                            {login[0],login[1] }
+                        };
+
+                        foreach (KeyValuePair<string, string> kvp in ajudaAdministrador)
+                        {
+                            Console.WriteLine($"{kvp.Key} => {kvp.Value}");
+                        }
                     }
+                    else
+                    {
+                        Console.WriteLine("O comando help não requer argumentos.");
+                    }
+
                     break;
                 case "clear":
                     ComandosTransversais.Limpar();
@@ -347,7 +394,7 @@ namespace Program
                     {
                         (var datasTransacoes, var tiposTransacoes, var comissoesTransacoes) = administrador.ObterTransacoes();
 
-                        var list = datasTransacoes.Zip(tiposTransacoes, (x, y) => x + y).Zip(comissoesTransacoes, (x, y) => x + y);
+                        var list = datasTransacoes.Zip(tiposTransacoes, (x, y) => x + " " + y).Zip(comissoesTransacoes, (x, y) => x + " " + y);
 
                         foreach (var data in list)
                         {
@@ -362,13 +409,7 @@ namespace Program
                 case "list-coins":
                     if (comando.Length == 1)
                     {
-                        // Permite obter as duas listas desejadas através do método Obter...();
-                        // e as salvar em duas variáveis separadas.
                         (var nomesMoedas, var datasMoedas) = administrador.ObterNomeEDatasMoedas();
-
-                        // O código abaixo permite imprimir os resultados de duas listas
-                        // ao mesmo tempo e foi retirado de
-                        // https://stackoverflow.com/questions/24277668/how-to-print-two-list-results-together.
 
                         foreach (var a in nomesMoedas.Zip(datasMoedas, (n, d) => new { n, d }))
                         {
@@ -453,7 +494,7 @@ namespace Program
                                         Console.WriteLine("Por favor, crie uma password:");
                                         password = Console.ReadLine();
                                     }
-                                    
+
                                     investidorTemporario.CriarPassword(password);
                                     investidorAtual = investidorTemporario;
 
